@@ -42,14 +42,6 @@ type Session struct {
 	RevokedAt *time.Time
 }
 
-func (u User) SessionExpiry(ttl time.Duration) time.Time {
-	anchor := u.UpdatedAt
-	if anchor.IsZero() {
-		anchor = u.CreatedAt
-	}
-	return anchor.UTC().Add(ttl)
-}
-
 func (u User) Validate() error {
 	email := strings.TrimSpace(strings.ToLower(u.Email))
 	if !strings.Contains(email, "@") || strings.HasPrefix(email, "@") || strings.HasSuffix(email, "@") {

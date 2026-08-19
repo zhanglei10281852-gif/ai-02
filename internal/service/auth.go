@@ -84,11 +84,7 @@ func (s *AuthService) Login(ctx context.Context, input LoginInput) (LoginResult,
 		return LoginResult{}, err
 	}
 	now := s.clock.Now()
-	expiresAt := user.SessionExpiry(s.sessionTTL)
-	session := domain.Session{
-		ID: identity.New("ses"), UserID: user.ID, TokenHash: tokenHash,
-		ExpiresAt: expiresAt, CreatedAt: now,
-	}
+	session := domain.Session{ID: identity.New("ses"), UserID: user.ID, TokenHash: tokenHash, ExpiresAt: now.Add(s.sessionTTL), CreatedAt: now}
 	if err := s.store.WithTx(ctx, func(tx repository.Tx) error {
 		if err := tx.InsertSession(ctx, session); err != nil {
 			return err
